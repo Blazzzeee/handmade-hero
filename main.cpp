@@ -2,6 +2,7 @@
 
 int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
                      LPSTR lpCmdLine, int nCmdShow) {
-  MessageBoxA(0, "Hello from Handmade Hero setup!", "Success", MB_OK);
+  MessageBox(0, "This is handmade hero", "Handmade hero",
+             MB_OK | MB_ICONINFORMATION);
   return 0;
 }
