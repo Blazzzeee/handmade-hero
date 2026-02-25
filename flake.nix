@@ -1,5 +1,5 @@
 {
-  description = "Handmade Hero - Windows cross dev shell (clang)";
+  description = "Handmade Hero - Windows cross dev shell (clang clean)";
 
   inputs.nixpkgs.url = "github:NixOS/nixpkgs/nixos-unstable";
 
@@ -8,35 +8,30 @@
     system = "x86_64-linux";
     pkgs = import nixpkgs { inherit system; };
 
-    llvm = pkgs.llvmPackages_latest;
-    mingw = pkgs.pkgsCross.mingwW64;
+    cross = pkgs.pkgsCross.mingwW64;
   in {
     devShells.${system}.default = pkgs.mkShell {
       packages = [
-        # Clang compiler
-        llvm.clang
+        # Clang from host
+        pkgs.llvmPackages_latest.clang
+        pkgs.llvmPackages_latest.lld
 
-        # Windows headers + libs
-        mingw.windows.mingw_w64
+        # Proper mingw cross compiler (provides headers + crt + libs)
+        cross.stdenv.cc
 
-        # LLD linker (faster, cleaner)
-        llvm.lld
-
-        # LSP + formatter
+        # LSP / formatter
         pkgs.clang-tools
 
-        # Build tools
+        # Optional
         pkgs.cmake
         pkgs.gnumake
-
-        # Optional: run .exe directly
         pkgs.wineWow64Packages.stable
       ];
 
       shellHook = ''
-        echo "Windows cross dev shell ready (clang)."
+        echo "Windows cross dev shell ready."
+        echo "GNU cross compiler: $(which x86_64-w64-mingw32-g++)"
         echo "Clang version: $(clang --version | head -n1)"
-        echo "Target: x86_64-w64-windows-gnu"
       '';
     };
   };
