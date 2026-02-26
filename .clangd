@@ -1,0 +1,5 @@
+CompileFlags:
+  Add: [
+    "--target=x86_64-w64-windows-gnu",
+    "-isystem", "/nix/store/cac1vpfy35hb836qsfmszc5dpfh70ks9-mingw-w64-x86_64-w64-mingw32-13.0.0-dev/include"
+  ]
