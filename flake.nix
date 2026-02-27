@@ -15,12 +15,14 @@
         # Clang from host
         pkgs.llvmPackages_latest.clang
         pkgs.llvmPackages_latest.lld
+        cross.buildPackages.gdb
 
         # Proper mingw cross compiler (provides headers + crt + libs)
         cross.stdenv.cc
 
         # LSP / formatter
         pkgs.clang-tools
+        pkgs.gdb
 
         # Optional
         pkgs.cmake

@@ -1,8 +1,13 @@
 #include <windows.h>
+#include <wingdi.h>
 #include <winuser.h>
 
-LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
-                            WPARAM WParam, LPARAM LParam) {
+#define persist static
+#define global static
+#define internal static
+
+internal LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
+                                     WPARAM WParam, LPARAM LParam) {
 
     LRESULT res = 0;
     switch (msg) {
@@ -10,13 +15,32 @@ LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
         res = 0;
     } break;
     case (WM_CLOSE): {
-        res = 0;
     } break;
     case (WM_MOVE): {
-        res = 0;
     } break;
     case (WM_SIZE): {
-        res = 0;
+    } break;
+    case (WM_PAINT): {
+        PAINTSTRUCT paint_info;
+        HDC DeviceContext = BeginPaint(WindowHandle, &paint_info);
+        if (!DeviceContext) {
+            // ig we should call the def process , assuming we cant
+            // process this req by the WM
+            return DefWindowProcA(WindowHandle, msg, WParam, LParam);
+        }
+
+        int x, y, width, height;
+
+        x = paint_info.rcPaint.left;
+        y = paint_info.rcPaint.top;
+
+        width = paint_info.rcPaint.right - paint_info.rcPaint.left;
+        height = paint_info.rcPaint.bottom - paint_info.rcPaint.top;
+        if (!PatBlt(DeviceContext, x, y, width, height, BLACKNESS)) {
+            return DefWindowProcA(WindowHandle, msg, WParam, LParam);
+        }
+
+        EndPaint(WindowHandle, &paint_info);
     } break;
     default: {
         return DefWindowProcA(WindowHandle, msg, WParam, LParam);
