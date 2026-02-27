@@ -15,6 +15,7 @@ internal LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
         res = 0;
     } break;
     case (WM_CLOSE): {
+        DestroyWindow(WindowHandle);
     } break;
     case (WM_MOVE): {
     } break;
@@ -42,8 +43,8 @@ internal LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
 
         EndPaint(WindowHandle, &paint_info);
     } break;
-    case (WM_QUIT): {
-        PostQuitMessage(0);
+    case (WM_DESTROY): {
+        DestroyWindow(WindowHandle);
     } break;
     default: {
         return DefWindowProcA(WindowHandle, msg, WParam, LParam);
@@ -89,11 +90,13 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     // TODO: handle message queue
     MSG msg;
-    while (1) {
-        ret = GetMessage(&msg, window_handle, 0, 0);
-        if (ret != 0) {
+    while ((ret = GetMessage(&msg, window_handle, 0, 0)) > 0) {
+        if (ret >= 0) {
             TranslateMessage(&msg);
             DispatchMessage(&msg);
+            if (ret == 0) {
+                // break here
+            }
         } else if (ret == -1) {
             // Unknown error
             PostQuitMessage(0);
