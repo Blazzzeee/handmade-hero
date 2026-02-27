@@ -42,6 +42,9 @@ internal LRESULT MainWindowProcedure(HWND WindowHandle, UINT msg,
 
         EndPaint(WindowHandle, &paint_info);
     } break;
+    case (WM_QUIT): {
+        PostQuitMessage(0);
+    } break;
     default: {
         return DefWindowProcA(WindowHandle, msg, WParam, LParam);
     } break;
@@ -58,6 +61,8 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
     (void)hPrevInstance;
     (void)lpCmdLine;
     (void)nCmdShow;
+
+    int ret;
 
     // create a window class
     WNDCLASSA window_class = {0};
@@ -84,9 +89,16 @@ int CALLBACK WinMain(HINSTANCE hInstance, HINSTANCE hPrevInstance,
 
     // TODO: handle message queue
     MSG msg;
-    while (GetMessage(&msg, window_handle, 0, 0)) {
-        TranslateMessage(&msg);
-        DispatchMessage(&msg);
+    while (1) {
+        ret = GetMessage(&msg, window_handle, 0, 0);
+        if (ret != 0) {
+            TranslateMessage(&msg);
+            DispatchMessage(&msg);
+        } else if (ret == -1) {
+            // Unknown error
+            PostQuitMessage(0);
+            break;
+        }
     }
 
     return 0;
