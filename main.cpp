@@ -22,8 +22,9 @@ global HDC BitmapDeviceContext;
 
 internal void Win32ResizeDIBSection(int width, int height) {
 
-    if (BitmapMemory) {
-        DeleteObject(BitmapMemory);
+    if (BitmapHandle) {
+        DeleteObject(BitmapHandle);
+        BitmapHandle = 0;
     }
 
     BitmapInfo.bmiHeader.biSize = sizeof(BitmapInfo.bmiHeader);
